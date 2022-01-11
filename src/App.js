@@ -8,7 +8,7 @@ class App extends React.Component {
   constructor(){
     super();
       this.state = {
-        searchedUser: '',
+        searchedUser: 'rstott87',
         user: {
           name: '',
           followersTotal: 0,
@@ -17,6 +17,35 @@ class App extends React.Component {
         },
         followers: [],
       }
+  }
+  
+  componentDidMount() {
+    console.log("we did mount")
+    axios.get(`https://api.github.com/users/${this.state.searchedUser}`)
+    .then(resp => {
+      this.setState({
+        ...this.state,
+        user: {
+          name: resp.data.name,
+          followersTotal: resp.data.followers,
+          reposTotal:resp.data.public_repos,
+          photo: resp.data.avatar_url
+        },
+      })
+    })
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.user.name !== this.state.user.name) {
+      axios.get(`https://api.github.com/users/${this.state.searchedUser}/followers`)
+      .then(resp => {
+        this.setState({
+          ...this.state,
+            followers: resp.data,
+        })
+      })
+      console.log("this user has changed")
+    }
   }
 
   handleChange = (e) => {
@@ -28,8 +57,8 @@ class App extends React.Component {
 
   handleSearch = (e) => {
     e.preventDefault();
-    console.log(this.state.searchedUser);
-    axios.get(`https://api.github.com/users/rstott87`)
+    console.log("handle search was executed");
+    axios.get(`https://api.github.com/users/${this.state.searchedUser}`)
       .then(resp => {
         this.setState({
           ...this.state,
@@ -39,10 +68,9 @@ class App extends React.Component {
             reposTotal:resp.data.public_repos,
             photo: resp.data.avatar_url
           },
-          searchedUser: ''
         })
       })
-  }
+    }
 
   render() {
     return(
@@ -60,7 +88,7 @@ class App extends React.Component {
                 reposTotal={this.state.user.reposTotal} 
                 followersTotal={this.state.user.followersTotal}
           />
-          <FollowerList/>
+          <FollowerList followers = {this.state.followers} />
         </form>
         
     </div>);
