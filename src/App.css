@@ -1,0 +1,15 @@
+.UserContainer {
+    border: 5px solid black;
+}
+
+.FollowersContainer {
+    border: 5px solid rgb(184, 51, 51);
+}
+
+.FollowerContainer {
+    border: 5px solid rgb(80, 51, 184);
+}
+
+img {
+    max-width: 80px;
+}
